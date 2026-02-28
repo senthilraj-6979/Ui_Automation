@@ -1,10 +1,10 @@
 package com.utilities;
 
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
@@ -127,4 +127,98 @@ public class UIActionUtility {
 
 
     }
+
+    /**
+     * Wait for element to be clickable and return it
+     * @param driver WebDriver instance
+     * @param locator By locator (e.g., By.xpath, By.id)
+     * @param timeoutInSeconds Timeout in seconds
+     * @return Clickable WebElement
+     */
+    public static WebElement waitAndGetClickableElement(WebDriver driver, By locator, int timeoutInSeconds) {
+        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+        wait.until(ExpectedConditions.elementToBeClickable(locator));
+        return driver.findElement(locator);
+    }
+
+    /**
+     * Wait for element to be clickable and return it (default 10 seconds timeout)
+     * @param driver WebDriver instance
+     * @param locator By locator
+     * @return Clickable WebElement
+     */
+    public static WebElement waitAndGetClickableElement(WebDriver driver, By locator) {
+        return waitAndGetClickableElement(driver, locator, 10);
+    }
+
+    /**
+     * Wait for element to be visible and return it
+     * @param driver WebDriver instance
+     * @param locator By locator
+     * @param timeoutInSeconds Timeout in seconds
+     * @return Visible WebElement
+     */
+    public static WebElement waitAndGetVisibleElement(WebDriver driver, By locator, int timeoutInSeconds) {
+        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        return driver.findElement(locator);
+    }
+
+    /**
+     * Wait for element to be visible and return it (default 10 seconds timeout)
+     * @param driver WebDriver instance
+     * @param locator By locator
+     * @return Visible WebElement
+     */
+    public static WebElement waitAndGetVisibleElement(WebDriver driver, By locator) {
+        return waitAndGetVisibleElement(driver, locator, 10);
+    }
+
+    /**
+     * Wait for element to be present and return it
+     * @param driver WebDriver instance
+     * @param locator By locator
+     * @param timeoutInSeconds Timeout in seconds
+     * @return Present WebElement
+     */
+    public static WebElement waitAndGetPresentElement(WebDriver driver, By locator, int timeoutInSeconds) {
+        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+        wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+        return driver.findElement(locator);
+    }
+
+    /**
+     * Wait for element to be present and return it (default 10 seconds timeout)
+     * @param driver WebDriver instance
+     * @param locator By locator
+     * @return Present WebElement
+     */
+    public static WebElement waitAndGetPresentElement(WebDriver driver, By locator) {
+        return waitAndGetPresentElement(driver, locator, 10);
+    }
+
+    /**
+     * Wait for element to be clickable using WebElement
+     * @param driver WebDriver instance
+     * @param element WebElement
+     * @param timeoutInSeconds Timeout in seconds
+     * @return Clickable WebElement
+     */
+    public static WebElement waitForElementToBeClickable(WebDriver driver, WebElement element, int timeoutInSeconds) {
+        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+        return wait.until(ExpectedConditions.elementToBeClickable(element));
+    }
+
+    /**
+     * Wait for element to be clickable using WebElement (default 10 seconds timeout)
+     * @param driver WebDriver instance
+     * @param element WebElement
+     * @return Clickable WebElement
+     */
+    public static WebElement waitForElementToBeClickable(WebDriver driver, WebElement element) {
+        return waitForElementToBeClickable(driver, element, 10);
+    }
+
+
+
 }

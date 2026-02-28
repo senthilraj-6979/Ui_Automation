@@ -1,5 +1,6 @@
 package stepDef;
 
+import com.qa.factory.DriverFactory;
 import com.utilities.UIActionUtility;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -23,10 +24,9 @@ import java.util.List;
 import java.util.Set;
 
 public class DropDownStepDef extends PageBase {
-
     @Given("Lanuch the URL {string}")
     public void lanuch_(String url) {
-        driver = new ChromeDriver();
+        driver = DriverFactory.getDriver();
         driver.get(url);
         driver.manage().window().maximize();
     }
@@ -74,13 +74,12 @@ public class DropDownStepDef extends PageBase {
 
     }
 
-    @Then("User zoom {string} screen")
+    @Then("User zoom {int} screen")
     public void xoomScreen(int zoomPercent) {
 
         try {
-            JavascriptExecutor js = null;
-            //     js.executeScript("document.body.style.zoom='"+zoomPercent+"%';");
-            js.executeScript("document.body.style.zoom = '300';");
+            JavascriptExecutor executor = (JavascriptExecutor) driver;
+            executor.executeScript("document.body.style.zoom='" + zoomPercent + "%';");
             System.out.println("Screen zoom " + zoomPercent);
         } catch (Exception e) {
             e.printStackTrace();

@@ -13,7 +13,7 @@ Feature: Brower Launch Validation
     Given Lanuch the URL "<URL>"
     When User select radio button from drop down
     Then User select checkboxes
-    Then User zoom "<Zoom>" screen
+    Then User zoom <Zoom> screen
     Examples:
       | URL |Zoom|
       |https://demo.guru99.com/test/radio.html|500|
