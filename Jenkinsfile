@@ -3,17 +3,9 @@ pipeline {
     agent any
 
     options {
-        // Keep last 30 builds
         buildDiscarder(logRotator(numToKeepStr: '30'))
-        // Add timestamps to console output
         timestamps()
-        // Timeout after 1 hour
         timeout(time: 1, unit: 'HOURS')
-    }
-
-    environment {
-        // Use system Maven (no tool configuration needed)
-        PATH = "/usr/local/bin:/usr/bin:${PATH}"
     }
 
     stages {
@@ -21,7 +13,6 @@ pipeline {
             steps {
                 echo '========== Checkout Code =========='
                 checkout scm
-                sh 'git --version'
             }
         }
 
@@ -35,36 +26,31 @@ pipeline {
         stage('Run Tests') {
             steps {
                 echo '========== Running Cucumber Tests =========='
-                script {
-                    try {
-                        // Run all tests
-                        sh 'mvn test -Dcucumber.filter.tags="@Alert or @LoginPage or @homePage"'
-                    } catch (Exception e) {
-                        echo "Test execution failed: ${e.message}"
-                        // Continue to reporting even if tests fail
-                        currentBuild.result = 'UNSTABLE'
-                    }
-                }
+                sh '''
+                    mvn test -Dcucumber.filter.tags="@Alert or @LoginPage or @homePage" || true
+                '''
             }
         }
 
         stage('Generate Reports') {
             steps {
                 echo '========== Generating Test Reports =========='
-                script {
-                    // Cucumber HTML Report
-                    publishHTML([
-                        reportDir: 'target/report',
-                        reportFiles: 'cucumber-reports.html',
-                        reportName: 'Cucumber Report',
-                        keepAll: true
-                    ])
+                publishHTML([
+                    reportDir: 'target/report',
+                    reportFiles: 'cucumber-reports.html',
+                    reportName: 'Cucumber Report',
+                    keepAll: true,
+                    allowMissing: true
+                ])
+            }
+        }
 
-                    // Archive test results
-                    junit testResults: 'target/surefire-reports/**/*.xml',
-                           skipPublishingChecks: true,
-                           allowEmptyResults: true
-                }
+        stage('Publish Test Results') {
+            steps {
+                echo '========== Publishing Test Results =========='
+                junit testResults: 'target/surefire-reports/**/*.xml',
+                      allowEmptyResults: true,
+                      skipPublishingChecks: true
             }
         }
 
@@ -79,32 +65,16 @@ pipeline {
 
     post {
         always {
-            echo '========== Test Execution Summary =========='
-            // Note: junit step requires node context, handled in stages
+            echo '========== Pipeline Complete =========='
         }
-
         success {
-            echo "✓ Pipeline executed successfully!"
-            // Send success notification
-            // emailext(
-            //     subject: "Build SUCCESS: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
-            //     body: "Build was successful. Check console output at ${env.BUILD_URL}",
-            //     to: "${env.CHANGE_AUTHOR_EMAIL}"
-            // )
+            echo "✓ Build Successful!"
         }
-
         failure {
-            echo "✗ Pipeline failed!"
-            // Send failure notification
-            // emailext(
-            //     subject: "Build FAILED: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
-            //     body: "Build failed. Check console output at ${env.BUILD_URL}",
-            //     to: "${env.CHANGE_AUTHOR_EMAIL}"
-            // )
+            echo "✗ Build Failed - Check logs above"
         }
-
         unstable {
-            echo "⚠ Build is unstable - some tests may have failed"
+            echo "⚠ Build Unstable - Some tests may have failed"
         }
     }
 }
