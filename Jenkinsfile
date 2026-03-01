@@ -12,11 +12,8 @@ pipeline {
     }
 
     environment {
-        // Set Maven path (optional, if not in system PATH)
-        MAVEN_HOME = tool name: 'Maven3', type: 'maven'
-        PATH = "${MAVEN_HOME}/bin:${PATH}"
-        // Set Java version if needed
-        JAVA_HOME = tool name: 'JDK8', type: 'jdk'
+        // Use system Maven (no tool configuration needed)
+        PATH = "/usr/local/bin:/usr/bin:${PATH}"
     }
 
     stages {
@@ -63,10 +60,10 @@ pipeline {
                         keepAll: true
                     ])
 
-                    // Allure Report (optional - requires Allure plugin)
-                    // allure includeProperties: false,
-                    //        jdk: '',
-                    //        results: [[path: 'target/allure-results']]
+                    // Archive test results
+                    junit testResults: 'target/surefire-reports/**/*.xml',
+                           skipPublishingChecks: true,
+                           allowEmptyResults: true
                 }
             }
         }
@@ -83,16 +80,7 @@ pipeline {
     post {
         always {
             echo '========== Test Execution Summary =========='
-            // Archive test results
-            junit testResults: 'target/surefire-reports/**/*.xml',
-                   skipPublishingChecks: true,
-                   allowEmptyResults: true
-
-            // Clean workspace
-            cleanWs(
-                deleteDirs: true,
-                patterns: [[pattern: 'target/**', type: 'INCLUDE']]
-            )
+            // Note: junit step requires node context, handled in stages
         }
 
         success {
