@@ -39,10 +39,6 @@ pipeline {
                     keepAll: true,
                     allowMissing: true
                 ])
-
-                catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-                    junit 'target/surefire-reports/**/*.xml'
-                }
             }
         }
 
