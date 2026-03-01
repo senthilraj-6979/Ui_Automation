@@ -1,4 +1,5 @@
 // Jenkins Declarative Pipeline for Selenium UI Automation with Cucumber
+// Version: 1.2.0 - Fixed junit context, simplified pipeline, removed tool references
 pipeline {
     agent any
 
