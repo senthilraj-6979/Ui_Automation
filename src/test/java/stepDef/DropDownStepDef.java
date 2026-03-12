@@ -1,5 +1,6 @@
 package stepDef;
 
+import com.pages.DropDownPage;
 import com.qa.factory.DriverFactory;
 import com.utilities.UIActionUtility;
 import io.cucumber.java.en.Given;
@@ -24,6 +25,12 @@ import java.util.List;
 import java.util.Set;
 
 public class DropDownStepDef extends PageBase {
+
+    private DropDownPage dropDownPage = new DropDownPage(DriverFactory.getDriver());
+
+    @FindBy(how = How.XPATH, using = "//a[contains(text(),'Español')]")
+    private WebElement languageOption;
+
     @Given("Lanuch the URL {string}")
     public void lanuch_(String url) {
         driver = DriverFactory.getDriver();
@@ -86,4 +93,23 @@ public class DropDownStepDef extends PageBase {
         }
 
     }
+
+    @Then("Click on trip type dropdown")
+    public void click_on_trip_type_dropdown() throws InterruptedException {
+            dropDownPage.select_tripType();
+    }
+
+    @Then("Click on {string}")
+     public void click_on_trip_type(String tripType) throws InterruptedException {
+        dropDownPage.selectTripType(tripType);
+     }
+
+     @Then("User clicks on language drop down")
+     public void click_on_language( ) throws InterruptedException {
+            dropDownPage.languageDropdown();
+            UIActionUtility.selectDropdownValue(languageOption,"visibletext","Español");
+            Thread.sleep(2000);
+
+     }
+
 }
