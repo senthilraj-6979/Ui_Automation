@@ -1,3 +1,4 @@
+@Regression
 Feature: To perform end to end booking
 
 

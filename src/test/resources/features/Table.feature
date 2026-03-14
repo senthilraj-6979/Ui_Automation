@@ -1,4 +1,4 @@
-@Table
+@Table @Regression
 Feature: Table Handling
 
   Scenario: Table Handling Scenarios

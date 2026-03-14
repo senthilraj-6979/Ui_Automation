@@ -1,4 +1,4 @@
-@Alert
+@Alert @Regression
 Feature: Alert Handling
 
   Scenario: Handle simple alert and confirm alert and prompt alert

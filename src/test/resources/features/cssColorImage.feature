@@ -1,3 +1,4 @@
+@Regression
 Feature: To validate the color and image size
 
 

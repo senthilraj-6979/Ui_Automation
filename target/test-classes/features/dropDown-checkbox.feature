@@ -1,4 +1,4 @@
-@Dropdown
+@Dropdown @Regression
 Feature: To perform language selection from Language drop down
   Scenario Outline: To perform language selection from Language drop down
     Given User launches the URL "<URL>"
