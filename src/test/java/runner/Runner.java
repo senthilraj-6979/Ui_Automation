@@ -11,7 +11,8 @@ import org.testng.annotations.DataProvider;
                 "pretty",
                 "html:target/report/cucumber-reports.html",
                 "json:target/report/cucumber.json",
-                "reporting.ExtentCucumberPlugin"
+                "reporting.ExtentCucumberPlugin",
+                "rerun:target/rerun.txt"
         },
         tags = "@Regression"
 )

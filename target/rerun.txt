@@ -1,0 +1,5 @@
+file:src/test/resources/features/homePage.feature:20:31:45
+file:src/test/resources/features/TrainsStatus.feature:30
+file:src/test/resources/features/dropDown-checkbox.feature:12
+file:src/test/resources/features/iFrame_PassengerDisability.feature:3
+file:src/test/resources/features/cssColorImage.feature:13
