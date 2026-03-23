@@ -13,7 +13,7 @@ Feature: To perform iFramehanding for passenger disability
     Then Click on "Round-Trip"
     Then Click on "One-Way"
     Then Click on "Multi-City"
-    Then Click on " Group Travel "
+    Then Click on "Group Travel"
 #    Then Click on "Hotels & Cars"
 
 

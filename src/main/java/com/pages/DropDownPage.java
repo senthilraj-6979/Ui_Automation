@@ -2,6 +2,9 @@ package com.pages;
 
 import com.utilities.UIActionUtility;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -15,6 +18,8 @@ public class DropDownPage {
     private final By tripTypeDropdown = By.xpath("//button[contains(@class,'ff-top-navbar__button')]");
     private static final String NORMALIZED_TEXT_XPATH =
             "translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ-', 'abcdefghijklmnopqrstuvwxyz ')";
+    private static final int TRIP_TYPE_TIMEOUT_SECONDS = 15;
+    private static final int MAX_TRIP_TYPE_CLICK_ATTEMPTS = 3;
 
     @FindBy(how = How.ID, using = "languageDropdown")
     private WebElement languageDropdown;
@@ -37,24 +42,46 @@ public class DropDownPage {
                 .toLowerCase();
 
         By tripTypeSelection = By.xpath("//button[" + NORMALIZED_TEXT_XPATH + "='" + normalizedTripType + "']");
+        clickTripTypeWithRetry(tripTypeSelection);
+    }
 
+    private void clickTripTypeWithRetry(By tripTypeSelection) {
+        RuntimeException lastException = new TimeoutException("Unable to click trip type option: " + tripTypeSelection);
+
+        for (int attempt = 1; attempt <= MAX_TRIP_TYPE_CLICK_ATTEMPTS; attempt++) {
+            try {
+                ensureTripTypeOptionIsOpen(tripTypeSelection);
+                UIActionUtility.waitAndClickElement(driver, tripTypeSelection, TRIP_TYPE_TIMEOUT_SECONDS);
+                return;
+            } catch (StaleElementReferenceException | ElementClickInterceptedException | TimeoutException exception) {
+                lastException = exception;
+            }
+        }
+
+        throw lastException;
+    }
+
+    private void ensureTripTypeOptionIsOpen(By tripTypeSelection) {
         if (!isTripTypeOptionVisible(tripTypeSelection)) {
             select_tripType();
         }
-        UIActionUtility.waitAndGetClickableElement(driver, tripTypeSelection, 50).click();
     }
 
     private boolean isTripTypeOptionVisible(By tripTypeSelection) {
-        List<WebElement> matchingOptions = driver.findElements(tripTypeSelection);
-        for (WebElement matchingOption : matchingOptions) {
-            if (matchingOption.isDisplayed()) {
-                return true;
+        try {
+            List<WebElement> matchingOptions = driver.findElements(tripTypeSelection);
+            for (WebElement matchingOption : matchingOptions) {
+                if (matchingOption.isDisplayed()) {
+                    return true;
+                }
             }
+        } catch (StaleElementReferenceException ignored) {
+            return false;
         }
         return false;
     }
 
-    public void languageDropdown() throws InterruptedException {
+    public void languageDropdown() {
         languageDropdown.click();
         List<WebElement> languageOptions = driver.findElements(By.xpath("//ul[@class='dropdown-menu']//a"));
         for (WebElement option : languageOptions) {
@@ -70,4 +97,3 @@ public class DropDownPage {
     }
 
 }
-

@@ -152,6 +152,29 @@ public class UIActionUtility {
     }
 
     /**
+     * Wait for element to be clickable and click a freshly located element.
+     * Useful when the DOM refreshes and older references go stale.
+     * @param driver WebDriver instance
+     * @param locator By locator
+     * @param timeoutInSeconds Timeout in seconds
+     */
+    public static void waitAndClickElement(WebDriver driver, By locator, int timeoutInSeconds) {
+        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+        wait.ignoring(StaleElementReferenceException.class)
+                .until(ExpectedConditions.elementToBeClickable(locator));
+        driver.findElement(locator).click();
+    }
+
+    /**
+     * Wait for element to be clickable and click a freshly located element (default 10 seconds timeout).
+     * @param driver WebDriver instance
+     * @param locator By locator
+     */
+    public static void waitAndClickElement(WebDriver driver, By locator) {
+        waitAndClickElement(driver, locator, 10);
+    }
+
+    /**
      * Wait for element to be visible and return it
      * @param driver WebDriver instance
      * @param locator By locator

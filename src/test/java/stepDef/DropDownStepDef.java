@@ -6,6 +6,7 @@ import com.utilities.UIActionUtility;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -26,6 +27,7 @@ import java.util.Set;
 
 public class DropDownStepDef extends PageBase {
 
+    private static final Logger log = Logger.getLogger(DropDownStepDef.class);
     private DropDownPage dropDownPage = new DropDownPage(DriverFactory.getDriver());
 
     @FindBy(how = How.XPATH, using = "//a[contains(text(),'Español')]")
@@ -33,6 +35,7 @@ public class DropDownStepDef extends PageBase {
 
     @Given("Lanuch the URL {string}")
     public void lanuch_(String url) {
+        log.info("Launching the URL------->: " + url);
         driver = DriverFactory.getDriver();
         driver.get(url);
         driver.manage().window().maximize();
@@ -108,7 +111,7 @@ public class DropDownStepDef extends PageBase {
      public void click_on_language( ) throws InterruptedException {
             dropDownPage.languageDropdown();
             UIActionUtility.selectDropdownValue(languageOption,"visibletext","Español");
-            Thread.sleep(2000);
+            Thread.sleep(4000);
 
      }
 
