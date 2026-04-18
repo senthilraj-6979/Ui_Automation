@@ -1,0 +1,299 @@
+// Jenkins Declarative Pipeline with Advanced Features
+// Including parallel execution, post-test actions, and notifications
+
+pipeline {
+    agent any
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '10'))
+        timestamps()
+        timeout(time: 2, unit: 'HOURS')
+        // Disable concurrent builds
+        disableConcurrentBuilds()
+    }
+
+    environment {
+        MAVEN_HOME = tool name: 'Maven3', type: 'maven'
+        PATH = "${MAVEN_HOME}/bin:${PATH}"
+        JAVA_HOME = tool name: 'JDK8', type: 'jdk'
+        // Test configuration
+        TEST_TAGS = '@Alert,@LoginPage,@homePage'
+        REPORT_DIR = 'target/report'
+        SCREENSHOT_DIR = 'target/screenshots'
+    }
+
+    parameters {
+        choice(
+            name: 'TEST_SUITE',
+            choices: [
+                'ALL',
+                'SMOKE',
+                'REGRESSION',
+                'SANITY',
+                'ALERT_TESTS',
+                'LOGIN_TESTS',
+                'FORM_TESTS'
+            ],
+            description: 'Select test suite to run'
+        )
+
+        booleanParam(
+            name: 'GENERATE_ALLURE_REPORT',
+            defaultValue: false,
+            description: 'Generate Allure Report (requires Allure plugin)'
+        )
+
+        booleanParam(
+            name: 'SEND_EMAIL_NOTIFICATION',
+            defaultValue: true,
+            description: 'Send email notification after test completion'
+        )
+    }
+
+    stages {
+        stage('Pre-Build Checks') {
+            steps {
+                echo '========== Pre-Build Checks =========='
+                script {
+                    echo "Job: ${env.JOB_NAME}"
+                    echo "Build Number: ${env.BUILD_NUMBER}"
+                    echo "Build URL: ${env.BUILD_URL}"
+                    echo "Branch: ${env.GIT_BRANCH}"
+                    echo "Test Suite Selected: ${params.TEST_SUITE}"
+                }
+                sh '''
+                    echo "Maven Version:"
+                    mvn --version
+                    echo "Java Version:"
+                    java -version
+                '''
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+                echo '========== Checkout Code =========='
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo '========== Clean Build =========='
+                sh 'mvn clean compile -DskipTests'
+            }
+        }
+
+        stage('Determine Test Tags') {
+            steps {
+                echo '========== Determining Test Tags =========='
+                script {
+                    switch(params.TEST_SUITE) {
+                        case 'ALL':
+                            env.TAGS_TO_RUN = '@Alert or @LoginPage or @homePage or @DropDown or @WebTable'
+                            break
+                        case 'SMOKE':
+                            env.TAGS_TO_RUN = '@Alert or @LoginPage'
+                            break
+                        case 'REGRESSION':
+                            env.TAGS_TO_RUN = '@Alert or @LoginPage or @homePage or @DropDown'
+                            break
+                        case 'SANITY':
+                            env.TAGS_TO_RUN = '@Alert or @LoginPage'
+                            break
+                        case 'ALERT_TESTS':
+                            env.TAGS_TO_RUN = '@Alert'
+                            break
+                        case 'LOGIN_TESTS':
+                            env.TAGS_TO_RUN = '@LoginPage'
+                            break
+                        case 'FORM_TESTS':
+                            env.TAGS_TO_RUN = '@PracticeForm'
+                            break
+                        default:
+                            env.TAGS_TO_RUN = '@Alert or @LoginPage'
+                    }
+                    echo "Running tests with tags: ${env.TAGS_TO_RUN}"
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                echo '========== Running Cucumber Tests =========='
+                script {
+                    try {
+                        sh """
+                            mvn test \
+                            -Dcucumber.filter.tags="${env.TAGS_TO_RUN}" \
+                            -Dorg.slf4j.simpleLogger.defaultLogLevel=info
+                        """
+                    } catch (Exception e) {
+                        echo "Tests failed: ${e.message}"
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
+            }
+        }
+
+        stage('Generate Cucumber Report') {
+            when {
+                always()
+            }
+            steps {
+                echo '========== Generating Cucumber HTML Report =========='
+                publishHTML([
+                    reportDir: "${REPORT_DIR}",
+                    reportFiles: 'cucumber-reports.html',
+                    reportName: 'Cucumber Test Report',
+                    keepAll: true,
+                    alwaysLinkToLastBuild: true
+                ])
+                echo "Cucumber report generated successfully"
+            }
+        }
+
+        stage('Generate Allure Report') {
+            when {
+                expression { params.GENERATE_ALLURE_REPORT == true }
+            }
+            steps {
+                echo '========== Generating Allure Report =========='
+                script {
+                    try {
+                        // Requires allure plugin installed
+                        allure includeProperties: false,
+                               jdk: '',
+                               results: [[path: 'target/allure-results']]
+                        echo "Allure report generated successfully"
+                    } catch (Exception e) {
+                        echo "Allure report generation failed: ${e.message}"
+                        echo "Note: Install Allure plugin in Jenkins to enable this feature"
+                    }
+                }
+            }
+        }
+
+        stage('Archive Artifacts') {
+            when {
+                always()
+            }
+            steps {
+                echo '========== Archiving Artifacts =========='
+                archiveArtifacts artifacts: '''
+                    target/report/**/*,
+                    target/screenshots/**/*,
+                    target/surefire-reports/**/*
+                    ''',
+                    allowEmptyArchive: true,
+                    fingerprint: true
+            }
+        }
+
+        stage('Test Results Summary') {
+            when {
+                always()
+            }
+            steps {
+                echo '========== Test Results Summary =========='
+                junit testResults: 'target/surefire-reports/**/*.xml',
+                      skipPublishingChecks: true,
+                      allowEmptyResults: true
+
+                script {
+                    // Parse test results
+                    sh '''
+                        echo "Test Execution Summary:"
+                        if [ -f "target/report/cucumber.json" ]; then
+                            echo "Cucumber JSON report found"
+                            ls -lh target/report/cucumber.json
+                        fi
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo '========== Post-Build Actions =========='
+
+            // Cleanup
+            cleanWs(
+                patterns: [
+                    [pattern: '.git', type: 'INCLUDE'],
+                    [pattern: '.gitignore', type: 'INCLUDE']
+                ],
+                deleteDirs: false
+            )
+        }
+
+        success {
+            echo '✓ Pipeline executed successfully!'
+            script {
+                if (params.SEND_EMAIL_NOTIFICATION) {
+                    // Uncomment to enable email notifications
+                    // emailext(
+                    //     subject: "✓ Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                    //     body: """
+                    //         Build Status: SUCCESS
+                    //         Job: ${env.JOB_NAME}
+                    //         Build Number: ${env.BUILD_NUMBER}
+                    //         Build URL: ${env.BUILD_URL}
+                    //         Test Suite: ${params.TEST_SUITE}
+                    //
+                    //         View test report: ${env.BUILD_URL}Cucumber_Test_Report/
+                    //     """,
+                    //     to: '${DEFAULT_RECIPIENTS}',
+                    //     mimeType: 'text/plain'
+                    // )
+                }
+            }
+        }
+
+        failure {
+            echo '✗ Pipeline FAILED!'
+            script {
+                if (params.SEND_EMAIL_NOTIFICATION) {
+                    // Uncomment to enable email notifications
+                    // emailext(
+                    //     subject: "✗ Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                    //     body: """
+                    //         Build Status: FAILURE
+                    //         Job: ${env.JOB_NAME}
+                    //         Build Number: ${env.BUILD_NUMBER}
+                    //         Build URL: ${env.BUILD_URL}
+                    //
+                    //         Please check console output: ${env.BUILD_URL}console
+                    //     """,
+                    //     to: '${DEFAULT_RECIPIENTS}',
+                    //     mimeType: 'text/plain',
+                    //     attachLog: true
+                    // )
+                }
+            }
+        }
+
+        unstable {
+            echo '⚠ Build is UNSTABLE - Some tests failed'
+            script {
+                if (params.SEND_EMAIL_NOTIFICATION) {
+                    // Uncomment to enable email notifications
+                    // emailext(
+                    //     subject: "⚠ Build UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                    //     body: """
+                    //         Build Status: UNSTABLE
+                    //         Job: ${env.JOB_NAME}
+                    //         Build Number: ${env.BUILD_NUMBER}
+                    //
+                    //         Some tests failed. Review test report: ${env.BUILD_URL}Cucumber_Test_Report/
+                    //     """,
+                    //     to: '${DEFAULT_RECIPIENTS}',
+                    //     mimeType: 'text/plain'
+                    // )
+                }
+            }
+        }
+    }
+}
+

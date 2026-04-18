@@ -14,7 +14,7 @@ public class cssColorImgStepDef extends PageBase {
 
     @When("Click and verify the image size")
     public void click_and_verify_the_image_size() {
-        image = driver.findElement(By.xpath("//div[@class='position-relative']"));
+        image = getDriver().findElement(By.xpath("//div[@class='position-relative']"));
         int imgHeight = image.getSize().height;
         int imgWidth = image.getSize().width;
         System.out.println("image height---"+imgHeight);
@@ -39,7 +39,7 @@ public class cssColorImgStepDef extends PageBase {
 
     @Then("Verify the bgcolor matches {string}")
     public void verify_the_bgcolor_matches(String bgColorCode) {
-        WebElement bgColorImg = driver.findElement(By.xpath("//h5[contains(text(),' Development')]//ancestor" +
+        WebElement bgColorImg = getDriver().findElement(By.xpath("//h5[contains(text(),' Development')]//ancestor" +
                 "::div[@class='bg-primary bg-opacity-10 rounded-3 text-center p-3 position-relative stretched-link']"));
         String bgColorImg1 = bgColorImg.getCssValue("background-color");
         Assert.assertEquals(bgColorImg1,bgColorCode);

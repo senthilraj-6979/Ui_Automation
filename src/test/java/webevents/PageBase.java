@@ -1,8 +1,11 @@
 package webevents;
 
+import com.qa.factory.DriverFactory;
 import org.openqa.selenium.WebDriver;
 
 public class PageBase {
-    public static WebDriver driver;
 
+    protected WebDriver getDriver() {
+        return DriverFactory.getDriver();
+    }
 }

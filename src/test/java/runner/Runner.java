@@ -10,9 +10,11 @@ import org.testng.annotations.DataProvider;
         plugin = {
                 "pretty",
                 "html:target/report/cucumber-reports.html",
-                "json:target/report/cucumber.json"
+                "json:target/report/cucumber.json",
+                "reporting.ExtentCucumberPlugin",
+                "rerun:target/rerun.txt"
         },
-        tags = "@Alert"
+        tags = "@Regression"
 )
 public class Runner extends AbstractTestNGCucumberTests {
 

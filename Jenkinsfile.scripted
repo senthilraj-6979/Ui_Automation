@@ -1,0 +1,100 @@
+// Jenkins Scripted Pipeline for Selenium UI Automation with Cucumber
+// This provides more flexibility than declarative pipeline
+
+node {
+    // Define colors for console output
+    def RESET = '\033[0m'
+    def GREEN = '\033[32m'
+    def RED = '\033[31m'
+    def YELLOW = '\033[33m'
+
+    try {
+        stage('Checkout') {
+            echo "${GREEN}========== Checkout Code ==========${RESET}"
+            checkout scm
+            sh 'git --version'
+        }
+
+        stage('Setup') {
+            echo "${GREEN}========== Setting up Environment ==========${RESET}"
+            // Check Maven version
+            sh 'mvn --version'
+            // Check Java version
+            sh 'java -version'
+        }
+
+        stage('Build') {
+            echo "${GREEN}========== Building Project ==========${RESET}"
+            sh 'mvn clean compile'
+        }
+
+        stage('Run Tests') {
+            echo "${GREEN}========== Running Cucumber Tests ==========${RESET}"
+
+            // Run tests with specific tags
+            def testResult = sh(
+                script: 'mvn test -Dcucumber.filter.tags="@Alert or @LoginPage"',
+                returnStatus: true
+            )
+
+            if (testResult == 0) {
+                echo "${GREEN}Tests passed!${RESET}"
+            } else {
+                echo "${YELLOW}Some tests failed - continuing to generate reports${RESET}"
+                currentBuild.result = 'UNSTABLE'
+            }
+        }
+
+        stage('Generate Reports') {
+            echo "${GREEN}========== Generating Test Reports ==========${RESET}"
+
+            // Publish Cucumber Report
+            publishHTML([
+                reportDir: 'target/report',
+                reportFiles: 'cucumber-reports.html',
+                reportName: 'Cucumber HTML Report',
+                keepAll: true
+            ])
+
+            echo "Report generated at: ${env.JENKINS_URL}job/${env.JOB_NAME}/${env.BUILD_NUMBER}/Cucumber_HTML_Report/"
+        }
+
+        stage('Archive Artifacts') {
+            echo "${GREEN}========== Archiving Artifacts ==========${RESET}"
+
+            // Archive reports
+            archiveArtifacts artifacts: 'target/report/**/*,target/screenshots/**/*',
+                             allowEmptyArchive: true
+
+            // Archive test results
+            junit testResults: 'target/surefire-reports/**/*.xml',
+                  skipPublishingChecks: true,
+                  allowEmptyResults: true
+        }
+
+        stage('Notifications') {
+            echo "${GREEN}========== Sending Notifications ==========${RESET}"
+
+            // Determine build status
+            if (currentBuild.result == 'FAILURE') {
+                echo "${RED}Build FAILED${RESET}"
+                // Send failure notification
+                // mail to: 'team@example.com',
+                //      subject: "Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                //      body: "Build failed. Details: ${env.BUILD_URL}"
+            } else if (currentBuild.result == 'UNSTABLE') {
+                echo "${YELLOW}Build UNSTABLE - Some tests failed${RESET}"
+            } else {
+                echo "${GREEN}Build SUCCESS${RESET}"
+            }
+        }
+
+    } catch (Exception e) {
+        echo "${RED}Pipeline error: ${e.message}${RESET}"
+        currentBuild.result = 'FAILURE'
+        throw e
+    } finally {
+        echo "${GREEN}========== Pipeline Execution Complete ==========${RESET}"
+    }
+}
+

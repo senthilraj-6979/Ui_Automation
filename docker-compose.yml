@@ -1,0 +1,240 @@
+version: '3.8'
+
+# Jenkins Docker Compose Configuration for Ui_Automation Project
+# Usage: docker-compose up -d
+
+services:
+  # Main Jenkins Service
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins_ui_automation
+    restart: unless-stopped
+
+    ports:
+      - "8080:8080"        # Jenkins web interface
+      - "50000:50000"      # Jenkins agent port
+
+    environment:
+      JAVA_OPTS: "-Xmx2048m -Xms512m"
+      JENKINS_ADMIN_ID: admin
+      JENKINS_ADMIN_PASSWORD: admin123
+      # Disable initial setup wizard (optional)
+      # JENKINS_SKIP_SETUP: "true"
+
+    volumes:
+      # Jenkins home directory
+      - jenkins_home:/var/jenkins_home
+      # Docker socket for Docker-in-Docker
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Local project directory (optional)
+      - ./:/workspace:ro
+
+    networks:
+      - automation_network
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Selenium Hub for distributed testing
+  selenium-hub:
+    image: selenium/hub:latest
+    container_name: selenium_hub
+    restart: unless-stopped
+
+    ports:
+      - "4444:4444"        # Selenium Grid
+      - "4442:4442"        # Event bus publish port
+      - "4443:4443"        # Event bus subscribe port
+
+    environment:
+      GRID_MAX_SESSION: 10
+      GRID_BROWSER_TIMEOUT: 300
+      GRID_TIMEOUT: 300
+
+    networks:
+      - automation_network
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4444"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Chrome Node for Selenium Grid
+  chrome:
+    image: selenium/node-chrome:latest
+    container_name: selenium_chrome
+    restart: unless-stopped
+
+    shm_size: 2gb
+
+    environment:
+      SE_EVENT_BUS_HOST: selenium-hub
+      SE_EVENT_BUS_PUBLISH_PORT: 4442
+      SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+      SE_NODE_MAX_SESSIONS: 5
+      SE_NODE_SESSION_TIMEOUT: 300
+      SE_ENABLE_PASS_THROUGH: "true"
+
+    ports:
+      - "6900:5900"        # VNC port for debugging
+
+    depends_on:
+      - selenium-hub
+
+    networks:
+      - automation_network
+
+    volumes:
+      - /dev/shm:/dev/shm
+
+  # Firefox Node for Selenium Grid (optional)
+  firefox:
+    image: selenium/node-firefox:latest
+    container_name: selenium_firefox
+    restart: unless-stopped
+
+    shm_size: 2gb
+
+    environment:
+      SE_EVENT_BUS_HOST: selenium-hub
+      SE_EVENT_BUS_PUBLISH_PORT: 4442
+      SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+      SE_NODE_MAX_SESSIONS: 5
+      SE_NODE_SESSION_TIMEOUT: 300
+
+    ports:
+      - "6901:5900"        # VNC port for debugging
+
+    depends_on:
+      - selenium-hub
+
+    networks:
+      - automation_network
+
+    volumes:
+      - /dev/shm:/dev/shm
+
+  # MySQL Database (optional - for test data)
+  mysql:
+    image: mysql:8.0
+    container_name: jenkins_mysql
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test_db
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testpass123
+      MYSQL_LOG_CONSOLE: "true"
+
+    ports:
+      - "3306:3306"
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+    networks:
+      - automation_network
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache (optional - for caching test data)
+  redis:
+    image: redis:alpine
+    container_name: jenkins_redis
+    restart: unless-stopped
+
+    ports:
+      - "6379:6379"
+
+    volumes:
+      - redis_data:/data
+
+    networks:
+      - automation_network
+
+    command: redis-server --appendonly yes
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # Grafana for monitoring (optional)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: jenkins_grafana
+    restart: unless-stopped
+
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_INSTALL_PLUGINS: 'grafana-piechart-panel'
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      - grafana_storage:/var/lib/grafana
+
+    networks:
+      - automation_network
+
+    depends_on:
+      - prometheus
+
+  # Prometheus for monitoring (optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: jenkins_prometheus
+    restart: unless-stopped
+
+    ports:
+      - "9090:9090"
+
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+
+    networks:
+      - automation_network
+
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+
+# Docker Volumes
+volumes:
+  jenkins_home:
+    driver: local
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  grafana_storage:
+    driver: local
+  prometheus_data:
+    driver: local
+
+# Docker Networks
+networks:
+  automation_network:
+    driver: bridge
+
+# Additional services to consider:
+# - Sonarqube: Code quality analysis
+# - Nginx: Reverse proxy
+# - PostgreSQL: Database alternative
+# - MongoDB: NoSQL database
+# - ELK Stack: Logging and analysis
+

@@ -11,15 +11,15 @@ import webevents.PageBase;
 public class KeyboardStepDef extends PageBase {
     @When("Verify the keyboard event")
     public void verify_the_keyboard_event() {
-        WebElement fullName = driver.findElement(By.id("userName"));
+        WebElement fullName = getDriver().findElement(By.id("userName"));
         fullName.sendKeys("Mr.Peter Haynes");
 
         //Enter the Email
-        WebElement email=driver.findElement(By.id("userEmail"));
+        WebElement email=getDriver().findElement(By.id("userEmail"));
         email.sendKeys("PeterHaynes@toolsqa.com");
 
         // Enter the Current Address
-        WebElement currentAddress=driver.findElement(By.id("currentAddress"));
+        WebElement currentAddress=getDriver().findElement(By.id("currentAddress"));
         currentAddress.sendKeys("43 School Lane London EC71 9GO");
 
         // Copy the Current Address
@@ -32,7 +32,7 @@ public class KeyboardStepDef extends PageBase {
         currentAddress.sendKeys(Keys.TAB);
 
         //Paste the Address in the Permanent Address field
-        WebElement permanentAddress=driver.findElement(By.id("permanentAddress"));
+        WebElement permanentAddress=getDriver().findElement(By.id("permanentAddress"));
         permanentAddress.sendKeys(Keys.CONTROL);
         permanentAddress.sendKeys("V");
 

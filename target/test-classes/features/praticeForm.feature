@@ -1,4 +1,4 @@
-@PraticeForm
+@PraticeForm @Regression
 Feature: Form Fill up
 
   Scenario: Fill practice form with valid data

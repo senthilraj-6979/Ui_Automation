@@ -1,3 +1,4 @@
+@Regression
 Feature: To validate Train Status
 
 #  Scenario Outline: Validate Train Station

@@ -12,4 +12,4 @@ Feature: To validate Train Status
 #    Then User navigate to twitter page
     Examples:
       | URL                          | LoginID            |
-      | https://amtrak.com/home.html | testuser@gmail.com |
+      | https://aemtest.amtrak.com/home.html | testuser@gmail.com |
