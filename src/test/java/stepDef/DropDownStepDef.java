@@ -28,7 +28,9 @@ import java.util.Set;
 public class DropDownStepDef extends PageBase {
 
     private static final Logger log = Logger.getLogger(DropDownStepDef.class);
-    private DropDownPage dropDownPage = new DropDownPage(DriverFactory.getDriver());
+    private DropDownPage dropDownPage() {
+        return new DropDownPage(DriverFactory.getDriver());
+    }
 
     @FindBy(how = How.XPATH, using = "//a[contains(text(),'Español')]")
     private WebElement languageOption;
@@ -36,15 +38,14 @@ public class DropDownStepDef extends PageBase {
     @Given("Lanuch the URL {string}")
     public void lanuch_(String url) {
         log.info("Launching the URL------->: " + url);
-        driver = DriverFactory.getDriver();
-        driver.get(url);
-        driver.manage().window().maximize();
+        getDriver().get(url);
+        getDriver().manage().window().maximize();
     }
 
     @When("User select click and select the value from drop down")
     public void user_select_click_and_select_the_value_from_drop_down() throws InterruptedException {
         Thread.sleep(1500);
-        WebElement country = driver.findElement(By.name("country"));
+        WebElement country = getDriver().findElement(By.name("country"));
         Select drpCountry = new Select(country);
 
         List<WebElement> dropList = drpCountry.getOptions();
@@ -57,17 +58,16 @@ public class DropDownStepDef extends PageBase {
         drpCountry.selectByVisibleText("ANTARCTICA");
 
         //Selecting Items in a Multiple SELECT elements
-        driver.get("http://jsbin.com/osebed/2");
-        Select fruits = new Select(driver.findElement(By.id("fruits")));
+        getDriver().get("http://jsbin.com/osebed/2");
+        Select fruits = new Select(getDriver().findElement(By.id("fruits")));
         fruits.selectByVisibleText("Banana");
         fruits.selectByVisibleText("Grape");
         fruits.selectByIndex(1);
-        driver.quit();
     }
 
     @When("User select radio button from drop down")
     public void user_select_radio_button_from_drop_down() throws InterruptedException {
-        WebElement readioBtn = driver.findElement(By.id("vfb-7-1"));
+        WebElement readioBtn = getDriver().findElement(By.id("vfb-7-1"));
         Assert.assertTrue(readioBtn.isDisplayed());
         readioBtn.click();
         readioBtn.isSelected();
@@ -75,12 +75,11 @@ public class DropDownStepDef extends PageBase {
 
     @Then("User select checkboxes")
     public void selectCheckbox() {
-        System.out.println("URL----" + driver.getCurrentUrl());
-        WebElement checkBox = driver.findElement(By.xpath("//strong[contains(text(),'Checkbox')]//preceding-sibling::input"));
-        WebElement checkBox1 = driver.findElement(By.id("vfb-6-0"));
+        System.out.println("URL----" + getDriver().getCurrentUrl());
+        WebElement checkBox = getDriver().findElement(By.xpath("//strong[contains(text(),'Checkbox')]//preceding-sibling::input"));
+        WebElement checkBox1 = getDriver().findElement(By.id("vfb-6-0"));
         checkBox1.click();
         Assert.assertTrue(checkBox1.isSelected());
-        driver.quit();
 
     }
 
@@ -88,8 +87,8 @@ public class DropDownStepDef extends PageBase {
     public void xoomScreen(int zoomPercent) {
 
         try {
-            JavascriptExecutor executor = (JavascriptExecutor) driver;
-            executor.executeScript("document.body.style.zoom='" + zoomPercent + "%';");
+            JavascriptExecutor executor = (JavascriptExecutor) getDriver();
+            executor.executeScript("document.body.style.zoom='" + zoomPercent + "%' ;".replace(" ;", ";"));
             System.out.println("Screen zoom " + zoomPercent);
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,17 +98,17 @@ public class DropDownStepDef extends PageBase {
 
     @Then("Click on trip type dropdown")
     public void click_on_trip_type_dropdown() throws InterruptedException {
-            dropDownPage.select_tripType();
+            dropDownPage().select_tripType();
     }
 
     @Then("Click on {string}")
      public void click_on_trip_type(String tripType) throws InterruptedException {
-        dropDownPage.selectTripType(tripType);
+        dropDownPage().selectTripType(tripType);
      }
 
      @Then("User clicks on language drop down")
      public void click_on_language( ) throws InterruptedException {
-            dropDownPage.languageDropdown();
+            dropDownPage().languageDropdown();
             UIActionUtility.selectDropdownValue(languageOption,"visibletext","Español");
             Thread.sleep(4000);
 

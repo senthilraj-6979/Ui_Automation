@@ -9,25 +9,28 @@ import org.junit.Assert;
 
 public class LoginPageStepDef {
 
-    private LoginPage loginPage = new LoginPage(DriverFactory.getDriver());
+    private LoginPage loginPage() {
+        return new LoginPage(DriverFactory.getDriver());
+    }
+
     @Given("User is on login page")
     public void user_is_on_login_page() {
         DriverFactory.getDriver().get("https://www.automationexercise.com/login");
-        String title = loginPage.getTitle();
+        String title = loginPage().getTitle();
         Assert.assertNotNull(title);
     }
 
     @When("User enters username {string}")
     public void user_enters_username(String userName) {
-        loginPage.enterEmailId(userName);
+        loginPage().enterEmailId(userName);
     }
     @When("User enters password {string}")
     public void user_enters_password(String password) {
-        loginPage.enterPwd(password);
+        loginPage().enterPwd(password);
     }
     @When("User clicks on Login Button")
     public void user_clicks_on_login_button() {
-        loginPage.clickLogin();
+        loginPage().clickLogin();
     }
     @Then("User gets the title of the page")
     public void user_gets_the_title_of_the_page() {

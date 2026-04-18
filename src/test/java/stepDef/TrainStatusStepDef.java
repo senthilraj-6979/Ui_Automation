@@ -8,57 +8,59 @@ import webevents.PageBase;
 
 public class TrainStatusStepDef extends PageBase {
 
-    private TrainsStatusPage trainsStatusPage = new TrainsStatusPage(DriverFactory.getDriver());
+    private TrainsStatusPage trainsStatusPage() {
+        return new TrainsStatusPage(DriverFactory.getDriver());
+    }
 
 
     @Then("User clicks TrainStatus option")
     public void user_click_guest_rewards_option() {
-        trainsStatusPage.clickTrainStatus();
+        trainsStatusPage().clickTrainStatus();
     }
 
 
     @Then ("User enters FROM station {string} at TRAIN STATUS")
     public void user_enter_from_station(String departStation) throws InterruptedException {
-        trainsStatusPage.trainStatusFromSationCode(departStation);
+        trainsStatusPage().trainStatusFromSationCode(departStation);
     }
 
     @Then ("User enters TO station {string} at TRAIN STATUS")
     public void user_enter_to_station(String arrivalStation) throws InterruptedException {
-        trainsStatusPage.trainStatusToSationCode(arrivalStation);
+        trainsStatusPage().trainStatusToSationCode(arrivalStation);
     }
 
     @Then("Select train status calender")
     public void select_train_status_calender() throws InterruptedException {
-        trainsStatusPage.select_train_status_Calender();
+        trainsStatusPage().select_train_status_Calender();
     }
 
     @Then("Select train status date")
     public void select_train_status_Date() throws InterruptedException {
-        trainsStatusPage.select_train_status_Date();
+        trainsStatusPage().select_train_status_Date();
     }
 
     @Then("Click Train Status button")
     public void trainStatusButton(){
-        trainsStatusPage.clickCheckStatus();
+        trainsStatusPage().clickCheckStatus();
     }
 
     @Then("User clicks TrainNumber option")
     public void selectTrainNumber(){
-        trainsStatusPage.selectTrainNumber();
+        trainsStatusPage().selectTrainNumber();
     }
 
     @Then("Select TrainNumber option")
     public void selectTrainNumberDropdown(){
-        trainsStatusPage.selectTrainNumberOption();
+        trainsStatusPage().selectTrainNumberOption();
     }
 
     @Then("Enter TrainNumber {string}")
     public void enterTrainNumber(String trainNumber){
-        trainsStatusPage.enterTrainName(trainNumber);
+        trainsStatusPage().enterTrainName(trainNumber);
     }
 
     @Then("Enter StationNumber {string}")
     public void enterStationNumber(String stationNumber){
-        trainsStatusPage.enterStationCode(stationNumber);
+        trainsStatusPage().enterStationCode(stationNumber);
     }
 }

@@ -12,11 +12,13 @@ import webevents.PageBase;
 
 public class MouseActionStepDef extends PageBase {
 
-    private MouseAction mouseAction = new MouseAction(DriverFactory.getDriver());
+    private MouseAction mouseAction() {
+        return new MouseAction(DriverFactory.getDriver());
+    }
 
     @Then("Hover mouse Add-ons")
     public void user_is_on_login_page() {
-          mouseAction.mouse_hover();
+          mouseAction().mouse_hover();
     }
 
 }

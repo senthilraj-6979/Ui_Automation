@@ -10,103 +10,105 @@ import webevents.PageBase;
 
 public class HomePageStepDef extends PageBase {
 
-    private HomePage bookingPage = new HomePage(DriverFactory.getDriver());
+    private HomePage bookingPage() {
+        return new HomePage(getDriver());
+    }
 
     @Given("Lanuch the amtrak URL {string}")
     public void lanuch_(String url) {
-        DriverFactory.getDriver().get(url);
+        getDriver().get(url);
     }
 
     @When("User click on AcceptAll cookie button")
     public void user_click_on_accept_all_button() {
-        bookingPage.clickAcceptAllCookies();
+        bookingPage().clickAcceptAllCookies();
     }
 
     @Then("User click guest rewards option")
     public void user_click_guest_rewards_option() {
-        bookingPage.clickGuestRewards();
+        bookingPage().clickGuestRewards();
     }
 
     @Then("User click signInbutton")
     public void user_click_signIn_option() {
-        bookingPage.clickSignIn();
+        bookingPage().clickSignIn();
     }
 
     @Then("User click one-way option")
     public void user_click_oneway_option() {
-        bookingPage.clickOneway();
-        bookingPage.selectOneway();
+        bookingPage().clickOneway();
+        bookingPage().selectOneway();
     }
 
     @Then("User enters from station {string}")
     public void user_enter_from_station(String fromStation) throws InterruptedException {
-        bookingPage.enterFromStation(fromStation);
+        bookingPage().enterFromStation(fromStation);
 
     }
 
     @Then("User enters to station {string}")
     public void user_enter_to_station(String toStation) throws InterruptedException {
-        bookingPage.enterToStation(toStation);
+        bookingPage().enterToStation(toStation);
 
     }
 
     @Then("User clicks departure date")
     public void user_clicks_departure_date() throws InterruptedException {
-        bookingPage.enterClicksDepartDateField();
+        bookingPage().enterClicksDepartDateField();
 
     }
 
     @Then("User selects departure date")
     public void user_selects_departure_date() throws InterruptedException {
-        bookingPage.selectDepartDate();
+        bookingPage().selectDepartDate();
 
     }
 
     @Then("Close calender clicking done button")
     public void click_doneButton() throws InterruptedException {
-        bookingPage.clickDone();
+        bookingPage().clickDone();
 
     }
 
     @Then("Click Find Trains")
     public void click_findTrains() throws InterruptedException {
-        bookingPage.clickFindTrains();
+        bookingPage().clickFindTrains();
 
     }
     @Then("User clicks {string} language dropdown")
     public void click_dropDown(String language) throws InterruptedException {
-        bookingPage.languageDropdown(language);
+        bookingPage().languageDropdown(language);
     }
 
     @Then("User clicks tripType dropdown")
     public void select_oneway() throws InterruptedException {
-        bookingPage.clickOnewayDefault();
+        bookingPage().clickOnewayDefault();
     }
 
     @Then("User selects Multi City trip")
     public void select_tripType() throws InterruptedException {
-        bookingPage.selectMultiCity();
+        bookingPage().selectMultiCity();
     }
 
 
     @Then("User selects {string} trip")
     public void select_roundTrip(String tripType) throws InterruptedException {
-        bookingPage.roundTrip(tripType);
+        bookingPage().roundTrip(tripType);
     }
 
     @Then("User clicks use points option")
     public void click_pointsOption() throws InterruptedException {
-        bookingPage.enableUserPoints();
+        bookingPage().enableUserPoints();
     }
 
     @Then("User click Need Assistance checkbox")
     public void select_needAssistance() throws InterruptedException {
-        bookingPage.assistanceCheckbox();
+        bookingPage().assistanceCheckbox();
     }
 
     @Then("Verify AGR popup is getting display")
     public void verify_AGRPopup() throws InterruptedException {
-        bookingPage.agrPopup();
+        bookingPage().agrPopup();
     }
 
 }

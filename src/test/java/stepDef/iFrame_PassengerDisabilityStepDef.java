@@ -9,46 +9,46 @@ import org.openqa.selenium.WebDriver;
 import webevents.PageBase;
 
 public class iFrame_PassengerDisabilityStepDef  extends PageBase {
-    private iFrame_PassengerDisabilityPage iFrame_PassengerDisabilityPage = new iFrame_PassengerDisabilityPage(DriverFactory.getDriver());
+    private iFrame_PassengerDisabilityPage passengerDisabilityPage() {
+        return new iFrame_PassengerDisabilityPage(DriverFactory.getDriver());
+    }
 
     @Then("User clicks on Passenger Disability link")
     public void user_click_oneway_option() {
-            iFrame_PassengerDisabilityPage.click_iFrame_PassengerDisabilityPage();
+            passengerDisabilityPage().click_iFrame_PassengerDisabilityPage();
     }
 
     @Then("User switch to iFrame and switch to frame")
     public void verify_iFrame(){
-        iFrame_PassengerDisabilityPage.switchToiFrame();
+        passengerDisabilityPage().switchToiFrame();
 
     }
 
     @Then("Verify heading of the page is Passenger with Disability or Assistance Needed?")
     public void verify_heading_of_the_page_is_passenger_with_disability_or_assistance_needed() {
-        iFrame_PassengerDisabilityPage.verifyHeading();
+        passengerDisabilityPage().verifyHeading();
 
     }
 
     @Then("Close the popup")
         public void close_popup(){
-           iFrame_PassengerDisabilityPage.closeiFrame();
+           passengerDisabilityPage().closeiFrame();
     }
 
     @Then("Click Traveller dropdown")
     public void click_traveller_dropdown() throws InterruptedException {
-        iFrame_PassengerDisabilityPage.clickTravellerDropdown();
+        passengerDisabilityPage().clickTravellerDropdown();
 
     }
 
     @Then("Click and increment the number of passengers")
     public void click_on_adult_increment_button() throws InterruptedException {
-        iFrame_PassengerDisabilityPage.clickAdultIncrement();
+        passengerDisabilityPage().clickAdultIncrement();
     }
 
     @Then("Then Click on trip type dropdown ")
     public void click_on_tripType_dropdown() throws InterruptedException {
-        iFrame_PassengerDisabilityPage.clickTripTypeDropdown();
+        passengerDisabilityPage().clickTripTypeDropdown();
     }
 
 }
-
-

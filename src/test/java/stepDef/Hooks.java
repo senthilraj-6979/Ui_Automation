@@ -27,15 +27,14 @@ public class Hooks extends PageBase {
         boolean headless = Boolean.parseBoolean(resolveValue("headless", "HEADLESS", prop.getProperty("headless"), "false"));
 
         driverFactory = new DriverFactory();
-        driver = driverFactory.init_driver(browserName);
+        driverFactory.init_driver(browserName, headless);
         System.out.println("Launching browser: " + browserName + " | headless=" + headless);
     }
 
     @After(order=1)
     public void afterScenario(){
         System.out.println("This will run after the Scenario");
-        //DriverFactory.quitDriver();
-        driver = null;
+        DriverFactory.quitDriver();
     }
 
     private String resolveValue(String systemPropertyName, String environmentVariableName, String configValue, String defaultValue) {
