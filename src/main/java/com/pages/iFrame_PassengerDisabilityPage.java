@@ -7,6 +7,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.Set;
 
 public class iFrame_PassengerDisabilityPage {
@@ -35,7 +36,7 @@ public class iFrame_PassengerDisabilityPage {
         System.out.println("Parent title----" + driver.getTitle());
 
         try {
-            new WebDriverWait(driver, DEFAULT_TIMEOUT_SECONDS).until(ExpectedConditions.numberOfWindowsToBe(2));
+            new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.numberOfWindowsToBe(2));
         } catch (TimeoutException ignored) {
             // Continue with whatever windows are currently available.
         }

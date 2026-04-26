@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results ignored="0" total="1" passed="1" failed="0" skipped="0">
+  <reporter-output>
+  </reporter-output>
+  <suite started-at="2026-04-25T23:35:31 EDT" name="UI Automation Test Suite" finished-at="2026-04-25T23:35:55 EDT" duration-ms="23655">
+    <groups>
+      <group name="cucumber">
+        <method signature="AbstractTestNGCucumberTests.runScenario(io.cucumber.testng.PickleWrapper,io.cucumber.testng.FeatureWrapper)[pri:0, instance:runner.Runner@34b7ac2f]" name="runScenario" class="io.cucumber.testng.AbstractTestNGCucumberTests"/>
+      </group> <!-- cucumber -->
+    </groups>
+    <test started-at="2026-04-25T23:35:31 EDT" name="Cucumber Tests" finished-at="2026-04-25T23:35:55 EDT" duration-ms="23655">
+      <class name="runner.Runner">
+        <test-method is-config="true" signature="setUpClass(org.testng.ITestContext)[pri:0, instance:runner.Runner@34b7ac2f]" started-at="2026-04-25T23:35:31 EDT" name="setUpClass" finished-at="2026-04-25T23:35:32 EDT" duration-ms="893" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.testng.TestRunner@59429fac]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUpClass -->
+        <test-method signature="runScenario(io.cucumber.testng.PickleWrapper,io.cucumber.testng.FeatureWrapper)[pri:0, instance:runner.Runner@34b7ac2f]" started-at="2026-04-25T23:35:32 EDT" name="runScenario" description="Runs Cucumber Scenarios" data-provider="scenarios" finished-at="2026-04-25T23:35:54 EDT" duration-ms="21843" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA["Open Google then open Amtrak in a new tab on same window"]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA["Window/Tab Handling - Google and Amtrak"]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- runScenario -->
+        <test-method is-config="true" signature="tearDownClass()[pri:0, instance:runner.Runner@34b7ac2f]" started-at="2026-04-25T23:35:54 EDT" name="tearDownClass" finished-at="2026-04-25T23:35:55 EDT" duration-ms="859" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDownClass -->
+      </class> <!-- runner.Runner -->
+    </test> <!-- Cucumber Tests -->
+  </suite> <!-- UI Automation Test Suite -->
+</testng-results>

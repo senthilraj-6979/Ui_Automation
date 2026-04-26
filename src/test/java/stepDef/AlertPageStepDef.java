@@ -2,12 +2,10 @@ package stepDef;
 
 import com.pages.AlertPage;
 import com.qa.factory.DriverFactory;
-import com.sun.javafx.tools.packager.Log;
 import com.utilities.UIActionUtility;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import lombok.extern.log4j.Log4j;
 import webevents.PageBase;
 
 
@@ -19,7 +17,7 @@ public class AlertPageStepDef extends PageBase {
 
         @Given("User launches the URL {string}")
         public void user_launches_the_url(String url) {
-            Log.info("Inside AlertPageStepDef - User launches the URL: " + url);
+            System.out.println("Inside AlertPageStepDef - User launches the URL: " + url);
             DriverFactory.getDriver().get(url);
         }
 
