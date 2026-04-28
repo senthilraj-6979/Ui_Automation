@@ -23,18 +23,29 @@ public class Hooks extends PageBase {
 
     @Before(order=1)
     public void launchBrowser() {
-        String browserName = resolveValue("browser", "BROWSER", prop.getProperty("browser"), "chrome");
-        boolean headless = Boolean.parseBoolean(resolveValue("headless", "HEADLESS", prop.getProperty("headless"), "false"));
+        try {
+            String browserName = resolveValue("browser", "BROWSER", prop.getProperty("browser"), "chrome");
+            boolean headless = Boolean.parseBoolean(resolveValue("headless", "HEADLESS", prop.getProperty("headless"), "false"));
 
-        driverFactory = new DriverFactory();
-        driverFactory.init_driver(browserName, headless);
-        System.out.println("Launching browser: " + browserName + " | headless=" + headless);
+            driverFactory = new DriverFactory();
+            driverFactory.init_driver(browserName, headless);
+            System.out.println("✓ Launching browser: " + browserName + " | headless=" + headless);
+        } catch (Exception e) {
+            System.err.println("✗ Failed to launch browser: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Browser initialization failed", e);
+        }
     }
 
     @After(order=1)
     public void afterScenario(){
-        System.out.println("This will run after the Scenario");
-        DriverFactory.quitDriver();
+        System.out.println("Cleaning up after the Scenario...");
+        try {
+            DriverFactory.quitDriver();
+        } catch (Exception e) {
+            System.err.println("✗ Error during browser cleanup: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private String resolveValue(String systemPropertyName, String environmentVariableName, String configValue, String defaultValue) {

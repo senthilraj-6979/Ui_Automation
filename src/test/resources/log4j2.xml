@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration packages="com.example.logging">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+        </Console>
+        <File name="File" fileName="target/test-logs/automation.log">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <!-- Suppress verbose logging from external libraries -->
+        <Logger name="org.openqa.selenium" level="WARN" />
+        <Logger name="io.github.bonigarcia" level="WARN" />
+        <Logger name="org.apache.http" level="WARN" />
+        <Logger name="freemarker" level="WARN" />
+        <Logger name="com.google.common" level="WARN" />
+
+        <!-- Set root logger level -->
+        <Root level="INFO">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="File" />
+        </Root>
+    </Loggers>
+</Configuration>
+
