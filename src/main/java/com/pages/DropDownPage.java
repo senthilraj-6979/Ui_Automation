@@ -13,7 +13,14 @@ import org.openqa.selenium.support.PageFactory;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class DropDownPage {
+
+    private static final Logger logger = LogManager.getLogger(DropDownPage.class);
+
+
     private final WebDriver driver;
     private final By tripTypeDropdown = By.xpath("//button[contains(@class,'ff-top-navbar__button')]");
     private static final String NORMALIZED_TEXT_XPATH =
@@ -30,7 +37,9 @@ public class DropDownPage {
         PageFactory.initElements(driver, this);
     }
 
-    public void select_tripType() {
+    public void select_tripType()
+    {
+        logger.info("select_tripType: Attempting to click trip type dropdown");
         UIActionUtility.waitAndGetClickableElement(driver, tripTypeDropdown).click();
     }
 
@@ -62,6 +71,7 @@ public class DropDownPage {
     }
 
     private void ensureTripTypeOptionIsOpen(By tripTypeSelection) {
+        logger.info("ensureTripTypeOptionIsOpen---");
         if (!isTripTypeOptionVisible(tripTypeSelection)) {
             select_tripType();
         }
@@ -82,6 +92,9 @@ public class DropDownPage {
     }
 
     public void languageDropdown() {
+
+        logger.info("languageDropdown -------");
+
         languageDropdown.click();
         List<WebElement> languageOptions = driver.findElements(By.xpath("//ul[@class='dropdown-menu']//a"));
         for (WebElement option : languageOptions) {

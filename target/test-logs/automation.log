@@ -1,0 +1,11 @@
+23:12:44.626 [main] INFO  stepDef.WindowHandlingTestsNewWindowPageStepDef - WindowHandlingTestsNewWindowPageStepDef initialized
+23:12:44.633 [main] INFO  stepDef.WindowHandlingTestsNewWindowPageStepDef - Switching to new window with URL: https://amtrak.com/home.html
+23:12:44.638 [main] INFO  com.pages.WindowHandlingTestsNewWindowPage - WindowHandlingTestsNewWindowPage initialized
+23:12:44.638 [main] INFO  com.pages.WindowHandlingTestsNewWindowPage - Opening new window with URL: https://amtrak.com/home.html
+23:13:02.014 [main] INFO  com.pages.WindowHandlingTestsNewWindowPage - ✓ New window opened with URL: https://amtrak.com/home.html
+23:13:02.347 [main] INFO  stepDef.WindowHandlingTestsNewWindowPageStepDef - ✓ Successfully switched to new window - URL: https://amtrak.com/home.html
+23:13:04.972 [main] INFO  stepDef.WindowHandlingTestsNewWindowPageStepDef - Switching back to old/original window
+23:13:04.972 [main] INFO  com.pages.WindowHandlingTestsNewWindowPage - WindowHandlingTestsNewWindowPage initialized
+23:13:04.973 [main] INFO  com.pages.WindowHandlingTestsNewWindowPage - Switching back to original window...
+23:13:05.004 [main] INFO  com.pages.WindowHandlingTestsNewWindowPage - ✓ Switched to original window - URL: https://www.amtrak.com/home.html
+23:13:05.004 [main] INFO  stepDef.WindowHandlingTestsNewWindowPageStepDef - ✓ Successfully switched back to old window

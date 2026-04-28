@@ -7,6 +7,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import webevents.PageBase;
 
+import java.time.Duration;
+
 public class ValidateElementDisappearStepDef extends PageBase {
 
 
@@ -14,7 +16,7 @@ public class ValidateElementDisappearStepDef extends PageBase {
     public void verify_the_element_is_disappeared() {
         DriverFactory.getDriver().findElement(By.xpath("//a[@href='/codingground.htm']")).click();
         // explicit wait of invisibility condition
-        WebDriverWait w = new WebDriverWait(DriverFactory.getDriver(),5);
+        WebDriverWait w = new WebDriverWait(DriverFactory.getDriver(), Duration.ofSeconds(5));
         // invisibilityOfElementLocated condition
         w.until(ExpectedConditions.
                 invisibilityOfElementLocated(By.xpath("//a[@href='/codingground.htm']")));

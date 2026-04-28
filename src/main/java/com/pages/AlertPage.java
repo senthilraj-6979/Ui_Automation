@@ -9,6 +9,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
+
 public class AlertPage {
     private WebDriver driver;
 
@@ -176,7 +178,7 @@ public class AlertPage {
      * @return Alert object
      */
     private Alert waitForAlertAndGetIt(int timeoutInSeconds) {
-        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
         wait.until(ExpectedConditions.alertIsPresent());
         return driver.switchTo().alert();
     }

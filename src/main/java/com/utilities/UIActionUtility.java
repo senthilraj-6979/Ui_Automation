@@ -6,6 +6,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.List;
 
 public class UIActionUtility {
@@ -136,7 +137,7 @@ public class UIActionUtility {
      * @return Clickable WebElement
      */
     public static WebElement waitAndGetClickableElement(WebDriver driver, By locator, int timeoutInSeconds) {
-        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
         wait.until(ExpectedConditions.elementToBeClickable(locator));
         return driver.findElement(locator);
     }
@@ -159,7 +160,7 @@ public class UIActionUtility {
      * @param timeoutInSeconds Timeout in seconds
      */
     public static void waitAndClickElement(WebDriver driver, By locator, int timeoutInSeconds) {
-        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
         wait.ignoring(StaleElementReferenceException.class)
                 .until(ExpectedConditions.elementToBeClickable(locator));
         driver.findElement(locator).click();
@@ -182,7 +183,7 @@ public class UIActionUtility {
      * @return Visible WebElement
      */
     public static WebElement waitAndGetVisibleElement(WebDriver driver, By locator, int timeoutInSeconds) {
-        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
         wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
         return driver.findElement(locator);
     }
@@ -205,7 +206,7 @@ public class UIActionUtility {
      * @return Present WebElement
      */
     public static WebElement waitAndGetPresentElement(WebDriver driver, By locator, int timeoutInSeconds) {
-        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
         wait.until(ExpectedConditions.presenceOfElementLocated(locator));
         return driver.findElement(locator);
     }
@@ -228,7 +229,7 @@ public class UIActionUtility {
      * @return Clickable WebElement
      */
     public static WebElement waitForElementToBeClickable(WebDriver driver, WebElement element, int timeoutInSeconds) {
-        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
         return wait.until(ExpectedConditions.elementToBeClickable(element));
     }
 
